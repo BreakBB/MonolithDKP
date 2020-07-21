@@ -79,6 +79,23 @@ end
 ---------------------------------------
 local SortButtons = {}
 
+function MonDKP:isPlayerOrAlt(entry, name)
+	if entry.player == name then
+		return true
+	else
+		local isAlt = false
+		if entry.alts then
+			for curAlt = 1, #entry.alts do
+				if entry.alts[curAlt] == name then
+					isAlt = true
+					break
+				end
+			end
+		end
+		return isAlt
+	end
+end
+
 function MonDKP:FilterDKPTable(sort, reset)          -- filters core.WorkingTable based on classes in classFiltered table. core.currentSort should be used in most cases
 	local parentTable;
 
@@ -122,7 +139,7 @@ function MonDKP:FilterDKPTable(sort, reset)          -- filters core.WorkingTabl
 				local name,_,_,_,_,_,_,_,online = GetGuildRosterInfo(i)
 				name = strsub(name, 1, string.find(name, "-")-1)
 				
-				if name == v.player then
+				if MonDKP:isPlayerOrAlt(v, name) then
 					IsOnline = online;
 					break;
 				end
@@ -132,9 +149,9 @@ function MonDKP:FilterDKPTable(sort, reset)          -- filters core.WorkingTabl
 			if MonDKP.ConfigTab1.checkBtn[10]:GetChecked() or MonDKP.ConfigTab1.checkBtn[12]:GetChecked() then
 				for i=1, 40 do
 					tempName,_,_,_,_,tempClass = GetRaidRosterInfo(i)
-					if tempName and tempName == v.player and MonDKP.ConfigTab1.checkBtn[10]:GetChecked() then
+					if tempName and MonDKP:isPlayerOrAlt(v, tempName) and MonDKP.ConfigTab1.checkBtn[10]:GetChecked() then
 						tinsert(core.WorkingTable, v)
-					elseif tempName and tempName == v.player and MonDKP.ConfigTab1.checkBtn[12]:GetChecked() then
+					elseif tempName and MonDKP:isPlayerOrAlt(v, tempName) and MonDKP.ConfigTab1.checkBtn[12]:GetChecked() then
 						InRaid = true;
 					end
 				end

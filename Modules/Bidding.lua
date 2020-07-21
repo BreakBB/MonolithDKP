@@ -154,6 +154,16 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
 				SendChatMessage(L["INVALIDPLAYER"], "WHISPER", nil, name)
 				return
 			end
+			-- Check if this is an alt and alter the name
+			local search = MonDKP:Table_Search(MonDKP_DKPTable, name)
+			local displayName = name
+
+			if search then
+				if name ~= MonDKP_DKPTable[search[1][1]].player then
+					displayName = name.."(Main: "..MonDKP_DKPTable[search[1][1]].player..")"
+					name = MonDKP_DKPTable[search[1][1]].player
+				end
+			end
 			if (tonumber(cmd) and (MonDKP_DB.modes.MaximumBid == nil or tonumber(cmd) <= MonDKP_DB.modes.MaximumBid or MonDKP_DB.modes.MaximumBid == 0)) or ((mode == "Static Item Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static")) and not cmd) then
 				if dkp then
 					if (cmd and cmd <= dkp) or (MonDKP_DB.modes.SubZeroBidding == true and dkp >= 0) or (MonDKP_DB.modes.SubZeroBidding == true and MonDKP_DB.modes.AllowNegativeBidders == true) or (mode == "Static Item Values" and dkp > 0 and (dkp > core.BiddingWindow.cost:GetNumber() or MonDKP_DB.modes.SubZeroBidding == true or MonDKP_DB.modes.costvalue == "Percent")) or ((mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static") and not cmd) then
@@ -171,7 +181,7 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
 									if not MonDKP_DB.modes.AnnounceBidName then
 										SendChatMessage(L["NEWHIGHBID"].." "..cmd.." DKP", "RAID")
 									else
-										SendChatMessage(L["NEWHIGHBIDDER"].." "..name.." ("..cmd.." DKP)", "RAID")
+										SendChatMessage(L["NEWHIGHBIDDER"].." "..displayName.." ("..cmd.." DKP)", "RAID")
 									end
 								end
 								if MonDKP_DB.modes.DeclineLowerBids and Bids_Submitted[1] and cmd <= Bids_Submitted[1].bid then 	-- declines bids lower than highest bid
@@ -191,7 +201,7 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
 									if not MonDKP_DB.modes.AnnounceBidName then
 										SendChatMessage(L["NEWHIGHBID"].." "..dkp.." DKP", "RAID")
 									else
-										SendChatMessage(L["NEWHIGHBIDDER"].." "..name.." ("..dkp.." DKP)", "RAID")
+										SendChatMessage(L["NEWHIGHBIDDER"].." "..displayName.." ("..dkp.." DKP)", "RAID")
 									end
 								end
 								table.insert(Bids_Submitted, {player=name, dkp=dkp})

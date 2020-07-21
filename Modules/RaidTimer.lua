@@ -33,7 +33,7 @@ function SecondsToClock(seconds)
 end
 
 function MonDKP:AwardPlayer(name, amount)
-	local search = MonDKP:Table_Search(MonDKP_DKPTable, name, "player")
+	local search = MonDKP:Table_Search(MonDKP_DKPTable, name)
 	local path;
 
 	if search then
@@ -62,8 +62,9 @@ local function AwardRaid(amount, reason)
 		local isSameZone = zone == GetRealZoneText()
 
 		if search_DKP and (not OnlineOnly or online) and (not limitToZone or isSameZone) then
-			MonDKP:AwardPlayer(tempName, amount)
-			tempList = tempList..tempName..",";
+			local realName = MonDKP_DKPTable[search_DKP[1][1]].player
+			MonDKP:AwardPlayer(realName, amount)
+			tempList = tempList..realName..",";
 		end
 	end
 

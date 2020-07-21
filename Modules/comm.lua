@@ -65,6 +65,9 @@ function MonDKP.Sync:OnEnable()
 	MonDKP.Sync:RegisterComm("MonDKPBidShare", MonDKP.Sync:OnCommReceived())			-- broadcast accepted bids
 	MonDKP.Sync:RegisterComm("MonDKPBidder", MonDKP.Sync:OnCommReceived())			-- Submit bids
 	MonDKP.Sync:RegisterComm("MonDKPAllTabs", MonDKP.Sync:OnCommReceived())			-- Full table broadcast
+	MonDKP.Sync:RegisterComm("MonDKPAddAlt", MonDKP.Sync:OnCommReceived())		    -- Add Alt
+	MonDKP.Sync:RegisterComm("MonDKPRemoveAlt", MonDKP.Sync:OnCommReceived())		    -- Remove Alt
+	MonDKP.Sync:RegisterComm("MonDKPAddPlayer", MonDKP.Sync:OnCommReceived())		    -- Add Player
 	--MonDKP.Sync:RegisterComm("MonDKPEditLoot", MonDKP.Sync:OnCommReceived())		-- not in use
 	--MonDKP.Sync:RegisterComm("MonDKPDataSync", MonDKP.Sync:OnCommReceived())		-- not in use
 	--MonDKP.Sync:RegisterComm("MonDKPDKPLogSync", MonDKP.Sync:OnCommReceived())	-- not in use
@@ -286,8 +289,9 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 			end
 			if (sender ~= UnitName("player")) then
 				if prefix == "MonDKPLootDist" or prefix == "MonDKPDKPDist" or prefix == "MonDKPDelLoot" or prefix == "MonDKPDelSync" or prefix == "MonDKPMinBid" or prefix == "MonDKPWhitelist"
-				or prefix == "MonDKPDKPModes" or prefix == "MonDKPStand" or prefix == "MonDKPZSumBank" or prefix == "MonDKPBossLoot" or prefix == "MonDKPDecay" or prefix == "MonDKPDelUsers" or
-				prefix == "MonDKPAllTabs" or prefix == "MonDKPBidShare" or prefix == "MonDKPMerge" then
+				or prefix == "MonDKPDKPModes" or prefix == "MonDKPStand" or prefix == "MonDKPZSumBank" or prefix == "MonDKPBossLoot" or prefix == "MonDKPDecay" or prefix == "MonDKPDelUsers"
+				or prefix == "MonDKPAllTabs" or prefix == "MonDKPBidShare" or prefix == "MonDKPMerge" or prefix == "MonDKPAddAlt"  or prefix == "MonDKPRemoveAlt" or prefix == "MonDKPAddPlayer"
+				then
 					decoded = LibDeflate:DecompressDeflate(LibDeflate:DecodeForWoWAddonChannel(message))
 					local success, deserialized = LibAceSerializer:Deserialize(decoded);
 					if success then
@@ -713,6 +717,18 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 							end
 
 							MonDKP:LootTable_Set(lootList)
+						elseif prefix == "MonDKPAddAlt" then
+							if 2 == #deserialized then
+								MonDKP:AddAlt(deserialized[1], deserialized[2], false)
+							end
+						elseif prefix == "MonDKPRemoveAlt" then
+							if 1 == #deserialized then
+								MonDKP:RemoveAlt(deserialized[1], false)
+							end
+						elseif prefix == "MonDKPAddPlayer" then
+							if 3 == #deserialized then
+								MonDKP:AddPlayer(deserialized[1], deserialized[2], deserialized[3], false)
+							end
 						end
 					else
 						MonDKP:Print("Report the following error on Curse or Github: "..deserialized)  -- error reporting if string doesn't get deserialized correctly
@@ -760,6 +776,11 @@ function MonDKP.Sync:SendData(prefix, data, target)
 		local compressed = LibDeflate:CompressDeflate(serialized, {level = 9})
 		if compressed then
 			packet = LibDeflate:EncodeForWoWAddonChannel(compressed)
+		end
+
+		if (prefix == "MonDKPAddAlt" or prefix == "MonDKPRemoveAlt" or prefix == "MonDKPAddPlayer") then
+			MonDKP.Sync:SendCommMessage(prefix, packet, "RAID")
+			return;
 		end
 
 		-- encoded

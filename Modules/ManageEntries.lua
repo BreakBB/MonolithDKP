@@ -10,7 +10,7 @@ local function Remove_Entries()
 	local deleted = {}
 
 	for i=1, #core.SelectedData do
-		local search = MonDKP:Table_Search(MonDKP_DKPTable, core.SelectedData[i]["player"]);
+		local search = MonDKP:Table_Search(MonDKP_DKPTable, core.SelectedData[i]["player"], "player");
 		local flag = false -- flag = only create archive entry if they appear anywhere in the history. If there's no history, there's no reason anyone would have it.
 		local curTime = time()
 
@@ -201,12 +201,80 @@ local function AddGuildToDKPTable(rank)
 	end
 end
 
-local function AddTargetToDKPTable()
-	local name = UnitName("target");
-	local _,class = UnitClass("target");
-	local c;
-	local curTime = time()
+function MonDKP:AddAlt(player, alt, send)
 
+	local searchAlt = MonDKP:Table_Search(MonDKP_DKPTable, alt)
+	if searchAlt then
+		MonDKP:Print(" Alt is already in database.")
+		return
+	end
+
+	local search = MonDKP:Table_Search(MonDKP_DKPTable, player)
+
+	if search then
+		local alts = MonDKP_DKPTable[search[1][1]].alts
+		if nil == alts then
+			alts = {}
+		end
+		table.insert(alts, alt)
+
+		MonDKP:DKPTable_Set(player, "alts", alts)
+		MonDKP:Print(L["ADDED"].." |cff"..alt.."|r as an alt")
+
+		if send then
+			MonDKP.Sync:SendData("MonDKPAddAlt", {player, alt})
+		end
+	else
+		MonDKP:Print("Selected player not found.")
+	end
+end
+
+local function AddTargetAsAlt()
+	local name = UnitName("target");
+	if #core.SelectedData ~= 1 then
+		MonDKP:Print(" Nothing or more than one player selected.")
+		return
+	end
+
+	MonDKP:AddAlt(core.SelectedData[1]["player"], name, true)
+end
+
+function MonDKP:RemoveAlt(alt, send)
+	local search = MonDKP:Table_Search(MonDKP_DKPTable, alt)
+
+	if search then
+		if MonDKP_DKPTable[search[1][1]].player == alt then
+			MonDKP:Print(" Selected player is a main.")
+			return
+		end
+		local alts = MonDKP_DKPTable[search[1][1]].alts
+		for k,v in pairs(alts) do
+			if v == alt then
+				table.remove(alts, k)
+				break
+			end
+		end
+
+		MonDKP:DKPTable_Set(MonDKP_DKPTable[search[1][1]].player, "alts", alts)
+		MonDKP:Print("Removed ".." |cff"..alt.."|r as an alt")
+
+		if send then
+			MonDKP:Print(" sending remove alt")
+			MonDKP.Sync:SendData("MonDKPRemoveAlt", {alt})
+		end
+	else
+		MonDKP:Print("Alt not found.")
+	end
+end
+
+local function RemoveTargetAsAlt()
+	local name = UnitName("target")
+
+	MonDKP:RemoveAlt(name, true)
+end
+
+function MonDKP:AddPlayer(name, class, curTime, send)
+	local c;
 	local search = MonDKP:Table_Search(MonDKP_DKPTable, name)
 
 	if not search then
@@ -237,7 +305,20 @@ local function AddTargetToDKPTable()
 			MonDKP_Archive[name].edited = curTime
 			MonDKP:Print(L["YOUHAVERECOVERED"])
 		end
+
+		if send then
+			MonDKP.Sync:SendData("MonDKPAddPlayer", {name, class, curTime})
+		end
 	end
+end
+
+local function AddTargetToDKPTable()
+	local name = UnitName("target");
+	local _,class = UnitClass("target");
+	local c;
+	local curTime = time()
+
+	MonDKP:AddPlayer(name, class, curTime, true)
 end
 
 function GetGuildRankList()
@@ -620,6 +701,88 @@ function MonDKP:ManageEntries()
 		}
 		StaticPopup_Show ("PURGE_CONFIRM")
 	end)
+
+	MonDKP.ConfigTab3.AddTargetAsAlt = self:CreateButton("TOPLEFT", MonDKP.ConfigTab3, "TOPLEFT", 0, 0, "Add Target as Alt");
+	MonDKP.ConfigTab3.AddTargetAsAlt:SetSize(120,25);
+	MonDKP.ConfigTab3.AddTargetAsAlt:ClearAllPoints()
+	MonDKP.ConfigTab3.AddTargetAsAlt:SetPoint("TOP", MonDKP.ConfigTab3.AddGuildToDKP, "BOTTOM", 0, -57)
+	MonDKP.ConfigTab3.AddTargetAsAlt:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+		GameTooltip:SetText("Add Alt Text", 0.25, 0.75, 0.90, 1, true);
+		GameTooltip:AddLine("Add Alt Desc", 1.0, 1.0, 1.0, true);
+		GameTooltip:Show();
+	end)
+	MonDKP.ConfigTab3.AddTargetAsAlt:SetScript("OnLeave", function(self)
+		GameTooltip:Hide()
+	end)
+	MonDKP.ConfigTab3.AddTargetAsAlt:SetScript("OnClick", function ()	-- confirmation dialog to add user(s)
+		if UnitIsPlayer("target") == true then
+			StaticPopupDialogs["ADD_TARGET_DKP"] = {
+				text = L["CONFIRMADDTARGET"].." "..UnitName("target").." as an alt.",
+				button1 = L["YES"],
+				button2 = L["NO"],
+				OnAccept = function()
+					AddTargetAsAlt()
+				end,
+				timeout = 0,
+				whileDead = true,
+				hideOnEscape = true,
+				preferredIndex = 3,
+			}
+			StaticPopup_Show ("ADD_TARGET_DKP")
+		else
+			StaticPopupDialogs["ADD_TARGET_DKP"] = {
+				text = L["NOPLAYERTARGETED"],
+				button1 = L["OK"],
+				timeout = 0,
+				whileDead = true,
+				hideOnEscape = true,
+				preferredIndex = 3,
+			}
+			StaticPopup_Show ("ADD_TARGET_DKP")
+		end
+	end);
+
+	MonDKP.ConfigTab3.RemoveTargetAsAlt = self:CreateButton("TOPLEFT", MonDKP.ConfigTab3, "TOPLEFT", 0, 0, "Remove Target as Alt");
+	MonDKP.ConfigTab3.RemoveTargetAsAlt:SetSize(120,25);
+	MonDKP.ConfigTab3.RemoveTargetAsAlt:ClearAllPoints()
+	MonDKP.ConfigTab3.RemoveTargetAsAlt:SetPoint("LEFT", MonDKP.ConfigTab3.AddTargetAsAlt, "RIGHT", 20, 0)
+	MonDKP.ConfigTab3.RemoveTargetAsAlt:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+		GameTooltip:SetText("Remove Alt Text", 0.25, 0.75, 0.90, 1, true);
+		GameTooltip:AddLine("Remove Alt Desc", 1.0, 1.0, 1.0, true);
+		GameTooltip:Show();
+	end)
+	MonDKP.ConfigTab3.RemoveTargetAsAlt:SetScript("OnLeave", function(self)
+		GameTooltip:Hide()
+	end)
+	MonDKP.ConfigTab3.RemoveTargetAsAlt:SetScript("OnClick", function ()	-- confirmation dialog to add user(s)
+		if UnitIsPlayer("target") == true then
+			StaticPopupDialogs["ADD_TARGET_DKP"] = {
+				text = "Do you want to remove ".." "..UnitName("target").." as an alt.",
+				button1 = L["YES"],
+				button2 = L["NO"],
+				OnAccept = function()
+					RemoveTargetAsAlt()
+				end,
+				timeout = 0,
+				whileDead = true,
+				hideOnEscape = true,
+				preferredIndex = 3,
+			}
+			StaticPopup_Show ("ADD_TARGET_DKP")
+		else
+			StaticPopupDialogs["ADD_TARGET_DKP"] = {
+				text = L["NOPLAYERTARGETED"],
+				button1 = L["OK"],
+				timeout = 0,
+				whileDead = true,
+				hideOnEscape = true,
+				preferredIndex = 3,
+			}
+			StaticPopup_Show ("ADD_TARGET_DKP")
+		end
+	end);
 
 	MonDKP.ConfigTab3.WhitelistContainer = CreateFrame("Frame", nil, MonDKP.ConfigTab3);
 	MonDKP.ConfigTab3.WhitelistContainer:SetSize(475, 200);

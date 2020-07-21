@@ -19,8 +19,10 @@ function MonDKP:AutoAward(phase, amount, reason) -- phase identifies who to awar
 				local isSameZone = zone == GetRealZoneText()
 
 				if search_DKP and (not OnlineOnly or online) and (not limitToZone or isSameZone) then
-					MonDKP:AwardPlayer(tempName, amount)
-					tempList = tempList..tempName..",";
+					local realName = MonDKP_DKPTable[search[1][1]].player
+
+					MonDKP:AwardPlayer(realName, amount)
+					tempList = tempList..realName..",";
 				end
 			end
 		end
