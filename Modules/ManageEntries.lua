@@ -205,7 +205,7 @@ function MonDKP:AddAlt(player, alt, send)
 
 	local searchAlt = MonDKP:Table_Search(MonDKP_DKPTable, alt)
 	if searchAlt then
-		MonDKP:Print(" Alt is already in database.")
+		MonDKP:Print(L["ALT_IS_IN_DATABASE"])
 		return
 	end
 
@@ -219,13 +219,11 @@ function MonDKP:AddAlt(player, alt, send)
 		table.insert(alts, alt)
 
 		MonDKP:DKPTable_Set(player, "alts", alts)
-		MonDKP:Print(L["ADDED"].." |cff"..alt.."|r as an alt")
+		MonDKP:Print(L["ADDED"].." |cff"..alt.."|r "..L["AS_AN_ALT"]..".")
 
 		if send then
 			MonDKP.Sync:SendData("MonDKPAddAlt", {player, alt})
 		end
-	else
-		MonDKP:Print("Selected player not found.")
 	end
 end
 
@@ -244,7 +242,7 @@ function MonDKP:RemoveAlt(alt, send)
 
 	if search then
 		if MonDKP_DKPTable[search[1][1]].player == alt then
-			MonDKP:Print(" Selected player is a main.")
+			MonDKP:Print(L["SELECTION_IS_MAIN"])
 			return
 		end
 		local alts = MonDKP_DKPTable[search[1][1]].alts
@@ -256,14 +254,13 @@ function MonDKP:RemoveAlt(alt, send)
 		end
 
 		MonDKP:DKPTable_Set(MonDKP_DKPTable[search[1][1]].player, "alts", alts)
-		MonDKP:Print("Removed ".." |cff"..alt.."|r as an alt")
+		MonDKP:Print(L["REMOVED"].." |cff"..alt.."|r "..L["AS_AN_ALT"]..".")
 
 		if send then
-			MonDKP:Print(" sending remove alt")
 			MonDKP.Sync:SendData("MonDKPRemoveAlt", {alt})
 		end
 	else
-		MonDKP:Print("Alt not found.")
+		MonDKP:Print(L["ALT_NOT_FOUND"])
 	end
 end
 
@@ -702,14 +699,14 @@ function MonDKP:ManageEntries()
 		StaticPopup_Show ("PURGE_CONFIRM")
 	end)
 
-	MonDKP.ConfigTab3.AddTargetAsAlt = self:CreateButton("TOPLEFT", MonDKP.ConfigTab3, "TOPLEFT", 0, 0, "Add Target as Alt");
+	MonDKP.ConfigTab3.AddTargetAsAlt = self:CreateButton("TOPLEFT", MonDKP.ConfigTab3, "TOPLEFT", 0, 0, L["ADD_TARGET_ALT"]);
 	MonDKP.ConfigTab3.AddTargetAsAlt:SetSize(120,25);
 	MonDKP.ConfigTab3.AddTargetAsAlt:ClearAllPoints()
 	MonDKP.ConfigTab3.AddTargetAsAlt:SetPoint("TOP", MonDKP.ConfigTab3.AddGuildToDKP, "BOTTOM", 0, -57)
 	MonDKP.ConfigTab3.AddTargetAsAlt:SetScript("OnEnter", function(self)
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-		GameTooltip:SetText("Add Alt Text", 0.25, 0.75, 0.90, 1, true);
-		GameTooltip:AddLine("Add Alt Desc", 1.0, 1.0, 1.0, true);
+		GameTooltip:SetText(L["ADD_TARGET_ALT"], 0.25, 0.75, 0.90, 1, true);
+		GameTooltip:AddLine(L["Add_TARGET_ALT_DESC"], 1.0, 1.0, 1.0, true);
 		GameTooltip:Show();
 	end)
 	MonDKP.ConfigTab3.AddTargetAsAlt:SetScript("OnLeave", function(self)
@@ -718,7 +715,7 @@ function MonDKP:ManageEntries()
 	MonDKP.ConfigTab3.AddTargetAsAlt:SetScript("OnClick", function ()	-- confirmation dialog to add user(s)
 		if UnitIsPlayer("target") == true then
 			StaticPopupDialogs["ADD_TARGET_DKP"] = {
-				text = L["CONFIRMADDTARGET"].." "..UnitName("target").." as an alt.",
+				text = L["CONFIRMADDTARGET"].." "..UnitName("target").." "..L["AS_AN_ALT"]..".",
 				button1 = L["YES"],
 				button2 = L["NO"],
 				OnAccept = function()
@@ -743,14 +740,14 @@ function MonDKP:ManageEntries()
 		end
 	end);
 
-	MonDKP.ConfigTab3.RemoveTargetAsAlt = self:CreateButton("TOPLEFT", MonDKP.ConfigTab3, "TOPLEFT", 0, 0, "Remove Target as Alt");
+	MonDKP.ConfigTab3.RemoveTargetAsAlt = self:CreateButton("TOPLEFT", MonDKP.ConfigTab3, "TOPLEFT", 0, 0, L["REMOVE_TARGET_ALT"]);
 	MonDKP.ConfigTab3.RemoveTargetAsAlt:SetSize(120,25);
 	MonDKP.ConfigTab3.RemoveTargetAsAlt:ClearAllPoints()
 	MonDKP.ConfigTab3.RemoveTargetAsAlt:SetPoint("LEFT", MonDKP.ConfigTab3.AddTargetAsAlt, "RIGHT", 20, 0)
 	MonDKP.ConfigTab3.RemoveTargetAsAlt:SetScript("OnEnter", function(self)
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-		GameTooltip:SetText("Remove Alt Text", 0.25, 0.75, 0.90, 1, true);
-		GameTooltip:AddLine("Remove Alt Desc", 1.0, 1.0, 1.0, true);
+		GameTooltip:SetText(L["REMOVE_TARGET_ALT"], 0.25, 0.75, 0.90, 1, true);
+		GameTooltip:AddLine(L["REMOVE_TARGET_ALT_DESC"], 1.0, 1.0, 1.0, true);
 		GameTooltip:Show();
 	end)
 	MonDKP.ConfigTab3.RemoveTargetAsAlt:SetScript("OnLeave", function(self)
@@ -759,7 +756,7 @@ function MonDKP:ManageEntries()
 	MonDKP.ConfigTab3.RemoveTargetAsAlt:SetScript("OnClick", function ()	-- confirmation dialog to add user(s)
 		if UnitIsPlayer("target") == true then
 			StaticPopupDialogs["ADD_TARGET_DKP"] = {
-				text = "Do you want to remove ".." "..UnitName("target").." as an alt.",
+				text = L["CONFIRMREMOVESELECT"].." "..UnitName("target").." "..L["AS_AN_ALT"]..".",
 				button1 = L["YES"],
 				button2 = L["NO"],
 				OnAccept = function()

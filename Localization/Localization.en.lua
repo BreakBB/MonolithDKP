@@ -739,6 +739,17 @@ core.L = {
   VALIDATEWARN          = "This will recalculate all players dkp, lifetime earned and lifetime spent based on their complete history. Make sure to back up your saved variables file in the event the result is improper due to missing history entries. You should reset previous dkp (context menu > select all > reset previous dkp) for all players prior to running so you can see how much they changed. Would you like to continue?",
   PASS                  = "Pass",
 
+  MAIN                  = "Main",
+  SELECTION_IS_MAIN     = "Selected player is a main.",
+  REMOVED               = "Removed",
+  AS_AN_ALT             = "as an alt",
+  ALT_NOT_FOUND         = "Alt not found.",
+  ALT_IS_IN_DATABASE    = "Alt is already in the database.",
+  REMOVE_TARGET_ALT     = "Remove Target as Alt",
+  REMOVE_TARGET_ALT_DESC= "Selct the alt of the player and click the butten. If the player is in the database as an alt. The entry will be removed.",
+  ADD_TARGET_ALT        = "Add Target as Alt",
+  Add_TARGET_ALT_DESC   = "Select the alt of the player as your target. Select the main of the player in the dkp list. The selected player will be added as an alt.",
+
   CHANGELOG1            = "- Improved broadcast system with interface accessible by clicking the status indicator icon in the lower left corner of main DKP interface.",
   CHANGELOG2            = "  - Full Broadcast option will broadcast all data and overwrite the recipients tables with identical copies of yours. Any data they had that you did not will be lost (Works the same as the broadcast button in 1.6 and earlier).",
   CHANGELOG3            = "  - Merge Last 2 Weeks option will broadcast any entries created in the last two weeks (but no earlier than when 2.1 was installed to prevent the possibility of data duplication) and will only apply entries the recipients do not have. Useful for merging multiple raid party data.",

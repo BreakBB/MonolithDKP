@@ -160,7 +160,7 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
 
 			if search then
 				if name ~= MonDKP_DKPTable[search[1][1]].player then
-					displayName = name.."(Main: "..MonDKP_DKPTable[search[1][1]].player..")"
+					displayName = name.."("..L["MAIN"]..": "..MonDKP_DKPTable[search[1][1]].player..")"
 					name = MonDKP_DKPTable[search[1][1]].player
 				end
 			end
