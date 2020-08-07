@@ -776,6 +776,9 @@ if GetLocale() == "deDE" then
     REMOVE_TARGET_ALT_DESC= "Selektiere den Twink des Spielers und drücke den Knopf. Wenn der Spieler als Twink in der Datenbank vorkommt, wird er entfernt.",
     ADD_TARGET_ALT        = "Ziel als Twink hinzufügen",
     Add_TARGET_ALT_DESC   = "Selektiere den Twink des Spielers. Selektiere den Main des Spielers in der DKP Liste. Der selektierte Spieler wird als Twink hinzugefügt.",
+    CLEAR_ALTS            = "Twinks entfernen",
+    CLEAR_ALTS_DESC       = "Entfernt alle Twinks von den selektierten Spielern.",
+    CONFIRM_REMOVE_ALTS   = "Bist du sicher, dass du alle Twinks von den Spielern entfernen willst",
 
     CHANGELOG1            = "- Verbessertes Broadcast-System mit zugänglicher Schnittstelle durch Klicken auf das Statusanzeigesymbol in der unteren linken Ecke der DKP-Hauptschnittstelle.",
     CHANGELOG2            = "  - Die Option \"Vollständige Übertragung\" überträgt alle Daten und überschreibt die Empfängertabellen mit identischen Kopien von Ihnen. Alle Daten, die sie hatten und die Sie nicht hatten, gehen verloren (Funktioniert genauso wie die Broadcast-Schaltfläche in 1.6 und früher).",

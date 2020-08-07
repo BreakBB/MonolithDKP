@@ -265,9 +265,24 @@ function MonDKP:RemoveAlt(alt, send)
 end
 
 local function RemoveTargetAsAlt()
-	local name = UnitName("target")
+    local name = UnitName("target")
 
-	MonDKP:RemoveAlt(name, true)
+    MonDKP:RemoveAlt(name, true)
+end
+
+local function ClearAlts()
+    for i=1, #core.SelectedData do
+        local search = MonDKP:Table_Search(MonDKP_DKPTable, core.SelectedData[i].player)
+
+        if search then
+            local alts = MonDKP_DKPTable[search[1][1]].alts
+            for k,v in pairs(alts) do
+                MonDKP.Sync:SendData("MonDKPRemoveAlt", {v})
+                MonDKP:Print(L["REMOVED"].." |cff"..v.."|r "..L["AS_AN_ALT"]..".")
+            end
+            MonDKP:DKPTable_Set(MonDKP_DKPTable[search[1][1]].player, "alts", {})
+        end
+    end
 end
 
 function MonDKP:AddPlayer(name, class, curTime, send)
@@ -447,23 +462,7 @@ function MonDKP:ManageEntries()
 	end)
 	MonDKP.ConfigTab3.remove_entries:SetScript("OnClick", function ()	-- confirmation dialog to remove user(s)
 		if #core.SelectedData > 0 then
-			local selected = L["CONFIRMREMOVESELECT"]..": \n\n";
-
-			for i=1, #core.SelectedData do
-				local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, core.SelectedData[i].player)
-
-			    if classSearch then
-			     	c = MonDKP:GetCColors(MonDKP_DKPTable[classSearch[1][1]].class)
-			    else
-			     	c = { hex="ffffff" }
-			    end
-				if i == 1 then
-					selected = selected.."|cff"..c.hex..core.SelectedData[i].player.."|r"
-				else
-					selected = selected..", |cff"..c.hex..core.SelectedData[i].player.."|r"
-				end
-			end
-			selected = selected.."?"
+			local selected = L["CONFIRMREMOVESELECT"]..": \n\n"..MonDKP:ListSelected().."?"
 
 			StaticPopupDialogs["REMOVE_ENTRIES"] = {
 			  text = selected,
@@ -780,6 +779,47 @@ function MonDKP:ManageEntries()
 			StaticPopup_Show ("ADD_TARGET_DKP")
 		end
 	end);
+
+    MonDKP.ConfigTab3.ClearAlts = self:CreateButton("TOPLEFT", MonDKP.ConfigTab3, "TOPLEFT", 0, 0, L["CLEAR_ALTS"]);
+    MonDKP.ConfigTab3.ClearAlts:SetSize(120,25);
+    MonDKP.ConfigTab3.ClearAlts:ClearAllPoints()
+    MonDKP.ConfigTab3.ClearAlts:SetPoint("TOP", MonDKP.ConfigTab3.RemoveTargetAsAlt, "BOTTOM", 0, -16)
+    MonDKP.ConfigTab3.ClearAlts:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+        GameTooltip:SetText(L["CLEAR_ALTS"], 0.25, 0.75, 0.90, 1, true);
+        GameTooltip:AddLine(L["CLEAR_ALTS_DESC"], 1.0, 1.0, 1.0, true);
+        GameTooltip:Show();
+    end)
+    MonDKP.ConfigTab3.ClearAlts:SetScript("OnLeave", function(self)
+        GameTooltip:Hide()
+    end)
+    MonDKP.ConfigTab3.ClearAlts:SetScript("OnClick", function ()	-- confirmation dialog to add user(s)
+        if  #core.SelectedData > 0 then
+            StaticPopupDialogs["ADD_TARGET_DKP"] = {
+                text = L["CONFIRM_REMOVE_ALTS"]..": \n\n"..MonDKP:ListSelected().."?",
+                button1 = L["YES"],
+                button2 = L["NO"],
+                OnAccept = function()
+                    ClearAlts()
+                end,
+                timeout = 0,
+                whileDead = true,
+                hideOnEscape = true,
+                preferredIndex = 3,
+            }
+            StaticPopup_Show ("ADD_TARGET_DKP")
+        else
+            StaticPopupDialogs["ADD_TARGET_DKP"] = {
+                text = L["NOENTRIESSELECTED"],
+                button1 = L["OK"],
+                timeout = 0,
+                whileDead = true,
+                hideOnEscape = true,
+                preferredIndex = 3,
+            }
+            StaticPopup_Show ("ADD_TARGET_DKP")
+        end
+    end);
 
 	MonDKP.ConfigTab3.WhitelistContainer = CreateFrame("Frame", nil, MonDKP.ConfigTab3);
 	MonDKP.ConfigTab3.WhitelistContainer:SetSize(475, 200);

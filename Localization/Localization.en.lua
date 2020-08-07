@@ -749,6 +749,10 @@ core.L = {
   REMOVE_TARGET_ALT_DESC= "Selct the alt of the player and click the butten. If the player is in the database as an alt, then the entry will be removed.",
   ADD_TARGET_ALT        = "Add Target as Alt",
   Add_TARGET_ALT_DESC   = "Select the alt of the player as your target. Select the main of the player in the dkp list. The selected player will be added as an alt.",
+  CLEAR_ALTS            = "Clear Alts",
+  CLEAR_ALTS_DESC       = "Remove all alts from the player.",
+  CONFIRM_REMOVE_ALTS   = "Are you sure you'd like to remove all alts from ",
+
 
   CHANGELOG1            = "- Improved broadcast system with interface accessible by clicking the status indicator icon in the lower left corner of main DKP interface.",
   CHANGELOG2            = "  - Full Broadcast option will broadcast all data and overwrite the recipients tables with identical copies of yours. Any data they had that you did not will be lost (Works the same as the broadcast button in 1.6 and earlier).",

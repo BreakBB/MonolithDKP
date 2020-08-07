@@ -159,6 +159,28 @@ function MonDKP:GetGuildRank(player)
 	return L["NOGUILD"]
 end
 
+function MonDKP:ListSelected()
+	local selected = ""
+	for i=1, #core.SelectedData do
+		local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, core.SelectedData[i].player)
+
+		if classSearch then
+			c = MonDKP:GetCColors(MonDKP_DKPTable[classSearch[1][1]].class)
+		else
+			c = { hex="ffffff" }
+		end
+		if i == 1 then
+			selected = selected.."|cff"..c.hex..core.SelectedData[i].player.."|r"
+		else
+			selected = selected..", |cff"..c.hex..core.SelectedData[i].player.."|r"
+		end
+	end
+
+	return selected
+end
+
+
+
 function MonDKP:GetGuildRankIndex(player)
 	local name, rank;
 	local guildSize,_,_ = GetNumGuildMembers();
