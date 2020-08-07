@@ -250,7 +250,7 @@ function MonDKP:ViewLimited(raid, standby, raiders)
 				if type(v) == "table" then
 					for i=1, 40 do
 						tempName,_,_,_,_,tempClass = GetRaidRosterInfo(i)
-						if tempName and tempName == v.player then
+						if tempName and MonDKP:isPlayerOrAlt(v, tempName) then
 							tinsert(tempTable, v)
 						end
 					end
