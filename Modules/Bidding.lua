@@ -157,11 +157,12 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
 			-- Check if this is an alt and alter the name
 			local search = MonDKP:Table_Search(MonDKP_DKPTable, name)
 			local displayName = name
+			local playerName = name
 
 			if search then
 				if name ~= MonDKP_DKPTable[search[1][1]].player then
 					displayName = name.."("..L["MAIN"]..": "..MonDKP_DKPTable[search[1][1]].player..")"
-					name = MonDKP_DKPTable[search[1][1]].player
+                    name = MonDKP_DKPTable[search[1][1]].player
 				end
 			end
 			if (tonumber(cmd) and (MonDKP_DB.modes.MaximumBid == nil or tonumber(cmd) <= MonDKP_DB.modes.MaximumBid or MonDKP_DB.modes.MaximumBid == 0)) or ((mode == "Static Item Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static")) and not cmd) then
@@ -233,7 +234,7 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
 					response = L["BIDDENIEDINVALID"]
 				end
 			end
-			SendChatMessage(response, "WHISPER", nil, name)
+			SendChatMessage(response, "WHISPER", nil, playerName)
 		else
 			SendChatMessage(L["NOBIDINPROGRESS"], "WHISPER", nil, name)
 		end	
