@@ -1,5 +1,4 @@
 local _, core = ...;
-local _G = _G;
 local MonDKP = core.MonDKP;
 local L = core.L;
 
@@ -34,8 +33,7 @@ local function CountDown(time)
 end
 
 function DKPTable_OnClick(self)
-    local offset = FauxScrollFrame_GetOffset(MonDKP.DKPTable) or 0
-    local index, TempSearch;
+    local TempSearch;
     SelectedRow = self.index
 
     if UIDROPDOWNMENU_OPEN_MENU then
@@ -76,7 +74,7 @@ function DKPTable_OnClick(self)
         end
     else
         LastSelection = SelectedRow;
-        for i = 1, core.TableNumRows do
+        for _ = 1, core.TableNumRows do
             TempSearch = MonDKP:Table_Search(core.SelectedData, core.WorkingTable[SelectedRow].player);
             if MonDKP.ConfigTab2.selectAll:GetChecked() then
                 MonDKP.ConfigTab2.selectAll:SetChecked(false)
@@ -233,7 +231,6 @@ function MonDKP:ViewLimited(raid, standby, raiders)
         core.CurSubView = "all"
     elseif raid or standby or raiders then
         local tempTable = {}
-        local GroupType = "none"
 
         if (not IsInGroup() and not IsInRaid()) and raid then
             MonDKP:Print(L["NOPARTYORRAID"])
@@ -248,7 +245,7 @@ function MonDKP:ViewLimited(raid, standby, raiders)
         end
 
         if raid then
-            for k, v in pairs(MonDKP_DKPTable) do
+            for _, v in pairs(MonDKP_DKPTable) do
                 if type(v) == "table" then
                     for i = 1, 40 do
                         tempName, _, _, _, _, tempClass = GetRaidRosterInfo(i)
@@ -567,9 +564,9 @@ local function RightClickMenu(self)
         local search = MonDKP:Table_Search(MonDKP_DKPTable, name)
 
         if search then
-            local rankList = GetGuildRankList()
+            local guildRankList = GetGuildRankList()
 
-            local match_rank = MonDKP:Table_Search(MonDKP_DB.raiders, rankList[rankIndex + 1].name)
+            local match_rank = MonDKP:Table_Search(MonDKP_DB.raiders, guildRankList[rankIndex + 1].name)
 
             if match_rank then
                 table.insert(tempTable, MonDKP_DKPTable[search[1][1]])
@@ -874,7 +871,7 @@ function MonDKP:DKPTable_Create()
     MonDKP.DKPTable.SeedVerify = CreateFrame("Frame", nil, MonDKP.DKPTable);
     MonDKP.DKPTable.SeedVerify:SetPoint("TOPLEFT", MonDKP.DKPTable, "BOTTOMLEFT", 0, -15);
     MonDKP.DKPTable.SeedVerify:SetSize(18, 18);
-    MonDKP.DKPTable.SeedVerify:SetScript("OnLeave", function(self)
+    MonDKP.DKPTable.SeedVerify:SetScript("OnLeave", function()
         GameTooltip:Hide()
     end)
     MonDKP.DKPTable.SeedVerify:SetScript("OnMouseDown", function()

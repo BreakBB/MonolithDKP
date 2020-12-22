@@ -355,8 +355,8 @@ end
 function MonDKP:Print(...)
     --print function to add "MonolithDKP:" to the beginning of print() outputs.
     if not MonDKP_DB.defaults.supressNotifications then
-        local defaults = MonDKP:GetThemeColor();
-        local prefix = string.format("|cff%s%s|r|cff%s", defaults[1].hex:upper(), "MonolithDKP:", defaults[2].hex:upper());
+        local defaultTheme = MonDKP:GetThemeColor();
+        local prefix = string.format("|cff%s%s|r|cff%s", defaultTheme[1].hex:upper(), "MonolithDKP:", defaultTheme[2].hex:upper());
         local suffix = "|r";
 
         for i = 1, NUM_CHAT_WINDOWS do
@@ -552,7 +552,7 @@ function MonDKP:StatusVerify_Update()
                 end
                 GameTooltip:Show()
             end)
-            MonDKP.DKPTable.SeedVerify:SetScript("OnLeave", function(self)
+            MonDKP.DKPTable.SeedVerify:SetScript("OnLeave", function()
                 GameTooltip:Hide()
             end)
 
@@ -587,7 +587,7 @@ function MonDKP:StatusVerify_Update()
                 end
                 GameTooltip:Show()
             end)
-            MonDKP.DKPTable.SeedVerify:SetScript("OnLeave", function(self)
+            MonDKP.DKPTable.SeedVerify:SetScript("OnLeave", function()
                 GameTooltip:Hide()
             end)
 
@@ -600,7 +600,7 @@ function MonDKP:StatusVerify_Update()
             GameTooltip:AddLine(L["CURRNOTINGUILD"], 1.0, 1.0, 1.0, true);
             GameTooltip:Show()
         end)
-        MonDKP.DKPTable.SeedVerify:SetScript("OnLeave", function(self)
+        MonDKP.DKPTable.SeedVerify:SetScript("OnLeave", function()
             GameTooltip:Hide()
         end)
 

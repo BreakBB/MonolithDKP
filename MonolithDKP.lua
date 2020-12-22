@@ -128,7 +128,6 @@ function MonDKP:FilterDKPTable(sort, reset)
     core.WorkingTable = {}
     for k, v in ipairs(parentTable) do
         local IsOnline = false;
-        local name;
         local InRaid = false;
         local searchFilter = true
 
@@ -209,7 +208,7 @@ function MonDKP:SortDKPTable(id, reset)
     else
         button.Ascend = not button.Ascend
     end
-    for k, v in pairs(SortButtons) do
+    for _, v in pairs(SortButtons) do
         if v ~= button then
             v.Ascend = nil
         end
@@ -316,7 +315,7 @@ function MonDKP:CreateMenu()
         v:SetHighlightTexture("Interface\\BUTTONS\\BlueGrad64_faded.blp");
         v:SetSize((core.TableWidth / 3) - 1, core.TableRowHeight)
         if v.Id == "class" then
-            v:SetScript("OnClick", function(self)
+            v:SetScript("OnClick", function()
                 MonDKP:SortDKPTable(core.CenterSort, "Clear")
             end)
         else
@@ -349,7 +348,7 @@ function MonDKP:CreateMenu()
     UIDropDownMenu_SetWidth(SortButtons.class.t, 80)
     UIDropDownMenu_SetText(SortButtons.class.t, L["CLASS"])
 
-    UIDropDownMenu_Initialize(SortButtons.class.t, function(self, level, menuList)
+    UIDropDownMenu_Initialize(SortButtons.class.t, function(self)
         local reason = UIDropDownMenu_CreateInfo()
         reason.func = self.SetValue
         reason.fontObject = "MonDKPSmallCenter"
@@ -427,7 +426,7 @@ function MonDKP:CreateMenu()
     MonDKP.UIConfig.search:SetFontObject("MonDKPNormalLeft")
     MonDKP.UIConfig.search:SetTextInsets(10, 10, 5, 5)
     MonDKP.UIConfig.search:SetText(L["SEARCH"])
-    MonDKP.UIConfig.search:SetScript("OnKeyUp", function(self)
+    MonDKP.UIConfig.search:SetScript("OnKeyUp", function()
         -- clears text and focus on esc
         if (MonDKP.UIConfig.search:GetText():match("[%^%$%(%)%%%.%[%]%*%+%-%?]")) then
             MonDKP.UIConfig.search:SetText(string.gsub(MonDKP.UIConfig.search:GetText(), "[%^%$%(%)%%%.%[%]%*%+%-%?]", ""))
@@ -471,7 +470,7 @@ function MonDKP:CreateMenu()
         GameTooltip:AddLine(L["SEARCHDESC"], 1.0, 1.0, 1.0, true);
         GameTooltip:Show();
     end)
-    MonDKP.UIConfig.search:SetScript("OnLeave", function(self)
+    MonDKP.UIConfig.search:SetScript("OnLeave", function()
         GameTooltip:Hide();
     end)
 
@@ -496,7 +495,7 @@ function MonDKP:CreateMenu()
     MonDKP.UIConfig.expand.trigger = CreateFrame("Button", "$ParentCollapseExpandButton", MonDKP.UIConfig.expand)
     MonDKP.UIConfig.expand.trigger:SetSize(15, 60)
     MonDKP.UIConfig.expand.trigger:SetPoint("CENTER", MonDKP.UIConfig.expand, "CENTER", 0, 0)
-    MonDKP.UIConfig.expand.trigger:SetScript("OnClick", function(self)
+    MonDKP.UIConfig.expand.trigger:SetScript("OnClick", function()
         if core.ShowState == false then
             MonDKP.UIConfig:SetWidth(1050)
             MonDKP.UIConfig.TabMenu:Show()

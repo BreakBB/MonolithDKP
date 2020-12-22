@@ -98,7 +98,7 @@ MonDKP.Commands = {
             MonDKP:BroadcastTimer(tonumber(time), title)
         end
     end,
-    ["export"] = function(time, ...)
+    ["export"] = function(_, ...)
         MonDKP:ToggleExportWindow()
     end,
     ["modes"] = function()
@@ -398,11 +398,11 @@ function MonDKP_OnEvent(self, event, arg1, ...)
         -- logs last 15 NPCs killed while in raid
         if IsInRaid() then
             -- only processes combat log events if in raid
-            local _, arg1, _, _, _, _, _, arg2, arg3 = CombatLogGetCurrentEventInfo();
-            if arg1 == "UNIT_DIED" and not strfind(arg2, "Player") and not strfind(arg2, "Pet-") then
+            local _, subevent, _, _, _, _, _, destFlags, destRaidFlags = CombatLogGetCurrentEventInfo();
+            if subevent == "UNIT_DIED" and not strfind(destFlags, "Player") and not strfind(destFlags, "Pet-") then
                 MonDKP:CheckOfficer()
                 if core.IsOfficer then
-                    if not MonDKP:Table_Search(MonDKP_DB.bossargs.LastKilledNPC, arg3) then
+                    if not MonDKP:Table_Search(MonDKP_DB.bossargs.LastKilledNPC, destRaidFlags) then
                         -- only adds it if it doesn't already exist in the table
                         if #MonDKP_DB.bossargs.LastKilledNPC > 14 then
                             for i = 15, #MonDKP_DB.bossargs.LastKilledNPC do
@@ -410,7 +410,7 @@ function MonDKP_OnEvent(self, event, arg1, ...)
                                 table.remove(MonDKP_DB.bossargs.LastKilledNPC, i)
                             end
                         end
-                        table.insert(MonDKP_DB.bossargs.LastKilledNPC, 1, arg3)
+                        table.insert(MonDKP_DB.bossargs.LastKilledNPC, 1, destRaidFlags)
                     end
                 end
             end
@@ -550,10 +550,10 @@ function MonDKP:OnInitialize(event, name)
         if not MonDKP_DB.defaults.ChatFrames then
             MonDKP_DB.defaults.ChatFrames = {}
             for i = 1, NUM_CHAT_WINDOWS do
-                local name = GetChatWindowInfo(i)
+                local windowName = GetChatWindowInfo(i)
 
-                if name ~= "" then
-                    MonDKP_DB.defaults.ChatFrames[name] = true
+                if windowName ~= "" then
+                    MonDKP_DB.defaults.ChatFrames[windowName] = true
                 end
             end
         end

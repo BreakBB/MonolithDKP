@@ -7,7 +7,6 @@ local L = core.L;
 --  When clicking a box off, unchecks "All" as well and flags checkAll to false
 --
 local checkAll = true;                    -- changes to false when less than all of the boxes are checked
-local curReason;                          -- stores user input in dropdown 
 
 local function ScrollFrame_OnMouseWheel(self, delta)
     -- scroll function for all but the DKPTable frame
