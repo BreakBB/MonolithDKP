@@ -238,6 +238,18 @@ local function AddTargetAsAlt()
     MonDKP:AddAlt(core.SelectedData[1]["player"], name, true)
 end
 
+local function MarkAsAlt()
+    if #core.SelectedData ~= 2 then
+        MonDKP:Print(" You have to select two players.")
+        return
+    end
+
+    MonDKP:AddAlt(core.SelectedData[1]["player"], core.SelectedData[2]["player"], true, true)
+    core.SelectedData[1] = core.SelectedData[2]
+    core.SelectedData[2] = nil
+    Remove_Entries()
+end
+
 function MonDKP:RemoveAlt(alt, send)
     local search = MonDKP:Table_Search(MonDKP_DKPTable, alt)
 
@@ -711,7 +723,7 @@ function MonDKP:ManageEntries()
     MonDKP.ConfigTab3.AddTargetAsAlt:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
         GameTooltip:SetText(L["ADD_TARGET_ALT"], 0.25, 0.75, 0.90, 1, true);
-        GameTooltip:AddLine(L["Add_TARGET_ALT_DESC"], 1.0, 1.0, 1.0, true);
+        GameTooltip:AddLine(L["ADD_TARGET_ALT_DESC"], 1.0, 1.0, 1.0, true);
         GameTooltip:Show();
     end)
     MonDKP.ConfigTab3.AddTargetAsAlt:SetScript("OnLeave", function(self)
@@ -744,6 +756,35 @@ function MonDKP:ManageEntries()
             }
             StaticPopup_Show("ADD_TARGET_DKP")
         end
+    end);
+
+    MonDKP.ConfigTab3.MarkAsAlt = self:CreateButton("TOPLEFT", MonDKP.ConfigTab3, "TOPLEFT", 0, 0, L["MARK_AS_ALT"]);
+    MonDKP.ConfigTab3.MarkAsAlt:SetSize(120, 25);
+    MonDKP.ConfigTab3.MarkAsAlt:ClearAllPoints()
+    MonDKP.ConfigTab3.MarkAsAlt:SetPoint("TOP", MonDKP.ConfigTab3.AddGuildToDKP, "BOTTOM", -140, -57)
+    MonDKP.ConfigTab3.MarkAsAlt:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+        GameTooltip:SetText(L["MARK_AS_ALT"], 0.25, 0.75, 0.90, 1, true);
+        GameTooltip:AddLine(L["MARK_AS_ALT_DESC"], 1.0, 1.0, 1.0, true);
+        GameTooltip:Show();
+    end)
+    MonDKP.ConfigTab3.MarkAsAlt:SetScript("OnLeave", function(self)
+        GameTooltip:Hide()
+    end)
+    MonDKP.ConfigTab3.MarkAsAlt:SetScript("OnClick", function()
+        StaticPopupDialogs["ADD_TARGET_DKP"] = {
+            text = L["CONFIRMADDTARGET"] .. " the player " .. L["AS_AN_ALT"] .. "?",
+            button1 = L["YES"],
+            button2 = L["NO"],
+            OnAccept = function()
+                MarkAsAlt()
+            end,
+            timeout = 0,
+            whileDead = true,
+            hideOnEscape = true,
+            preferredIndex = 3,
+        }
+        StaticPopup_Show("ADD_TARGET_DKP")
     end);
 
     MonDKP.ConfigTab3.RemoveTargetAsAlt = self:CreateButton("TOPLEFT", MonDKP.ConfigTab3, "TOPLEFT", 0, 0, L["REMOVE_TARGET_ALT"]);

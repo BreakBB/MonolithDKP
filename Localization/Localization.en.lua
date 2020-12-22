@@ -1,5 +1,4 @@
 local _, core = ...;
-local MonDKP = core.MonDKP;
 
 core.BossList = {
     MC = {
@@ -748,7 +747,9 @@ core.L = {
     REMOVE_TARGET_ALT = "Remove Target as Alt",
     REMOVE_TARGET_ALT_DESC = "Selct the alt of the player and click the butten. If the player is in the database as an alt, then the entry will be removed.",
     ADD_TARGET_ALT = "Add Target as Alt",
-    Add_TARGET_ALT_DESC = "Select the alt of the player as your target. Select the main of the player in the dkp list. The selected player will be added as an alt.",
+    ADD_TARGET_ALT_DESC = "Select the alt of the player as your target. Select the main of the player in the dkp list. The selected player will be added as an alt.",
+    MARK_AS_ALT = "Mark Player as Alt",
+    MARK_AS_ALT_DESC = "Select the main character in the list first. Then select the character you want to mark as alt.",
     CLEAR_ALTS = "Clear Alts",
     CLEAR_ALTS_DESC = "Remove all alts from the player.",
     CONFIRM_REMOVE_ALTS = "Are you sure you'd like to remove all alts from ",

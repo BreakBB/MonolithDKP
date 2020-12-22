@@ -1,6 +1,5 @@
 if GetLocale() == "deDE" then
     local _, core = ...;
-    local MonDKP = core.MonDKP;
 
     core.BossList = {
         MC = {
@@ -775,7 +774,9 @@ if GetLocale() == "deDE" then
         REMOVE_TARGET_ALT = "Ziel als Twink entfernen",
         REMOVE_TARGET_ALT_DESC = "Selektiere den Twink des Spielers und drücke den Knopf. Wenn der Spieler als Twink in der Datenbank vorkommt, wird er entfernt.",
         ADD_TARGET_ALT = "Ziel als Twink hinzufügen",
-        Add_TARGET_ALT_DESC = "Selektiere den Twink des Spielers. Selektiere den Main des Spielers in der DKP Liste. Der selektierte Spieler wird als Twink hinzugefügt.",
+        ADD_TARGET_ALT_DESC = "Selektiere den Twink des Spielers. Selektiere den Main des Spielers in der DKP Liste. Der selektierte Spieler wird als Twink hinzugefügt.",
+        MARK_AS_ALT = "Spieler als Twink markieren",
+        MARK_AS_ALT_DESC = "Selektiere den Hauptcharakter zuerst in der Liste. Selektiere dann den Charakter, den du als Twink markieren möchtest.",
         CLEAR_ALTS = "Twinks entfernen",
         CLEAR_ALTS_DESC = "Entfernt alle Twinks von den selektierten Spielern.",
         CONFIRM_REMOVE_ALTS = "Bist du sicher, dass du alle Twinks von den Spielern entfernen willst",
